@@ -10,6 +10,10 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', function ($scope, Pa
     });
   };
 
+  $scope.submit = function(){
+    PageManager.addPage({youtubeLink:$scope.newPage.youtubeLink, description:$scope.newPage.description, title:$scope.newPage.title})
+  };
+
   $scope.getPages();
 }]);
 controllers.controller('MyCtrl2', [function () {

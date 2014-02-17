@@ -23,14 +23,14 @@ services.factory('PageManager', ['$q', function ($q) {
       var deferred = $q.defer();
       pages.push(page);
       deferred.resolve({data: 'success', status: 200});
-      return q.promise;
+      return deferred.promise;
     },
     removePage:function(page)
     {
       var deferred = $q.defer();
       pages.splice(pages.indexOf(page),1);
       deferred.resolve({data: 'success', status: 200});
-      return q.promise;
+      return deferred.promise;
     }
   }
 }]);
