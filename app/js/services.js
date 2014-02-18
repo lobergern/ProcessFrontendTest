@@ -1,11 +1,11 @@
 'use strict';
 
-var serverBaseUrl = '';
+var serverBaseUrl = 'http://155.92.69.91';
 
 /* Services */
 var pages = [
-  {youtubeLink: 'http://www.youtube.com/watch?v=d2ZNaLQD60Y', title: 'Game Of Thrones', description: 'description', rating: 5},
-  {youtubeLink: 'http://www.youtube.com/watch?v=PRYjmBQ2W3s', title: 'Wall', description: 'description', rating: 3}
+  {video: 'http://www.youtube.com/watch?v=d2ZNaLQD60Y', title: 'Game Of Thrones', description: 'description', rating: 5},
+  {video: 'http://www.youtube.com/watch?v=PRYjmBQ2W3s', title: 'Wall', description: 'description', rating: 3}
 ];
 
 var users = [
@@ -19,12 +19,9 @@ var services = angular.module('myApp.services', []);
 services.factory('PageManager', ['$q', '$http', function ($q, $http) {
   return {
     getPages: function () {
-      var deferred = $q.defer();
-      deferred.resolve({data: {pages: pages}, status: 200});
-
-      $http({
+      return $http({
         method: "GET",
-        url: serverBaseUrl + '/pages',
+        url: serverBaseUrl + '/content',
         crossDomain: true
       }).then(function (response) {
         return response;
@@ -32,27 +29,20 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         console.log(responseError);
         return responseError;
       });
-
-      return deferred.promise;
     },
     addPage: function (page) {
-      var deferred = $q.defer();
-      pages.push(page);
-      deferred.resolve({data: 'success', status: 200});
-
-      $http({
+      return $http({
         method: "POST",
-        url: serverBaseUrl + '/pages',
+        url: serverBaseUrl + '/content',
         data: JSON.stringify(page),
         crossDomain: true
       }).then(function (response) {
+        pages.push(page);
         return response;
       }, function (responseError) {
         console.log(responseError);
         return responseError;
       });
-
-      return deferred.promise;
     },
     removePage: function (page) {
       var deferred = $q.defer();
@@ -65,7 +55,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
 
       $http({
         method: "PUT",
-        url: serverBaseUrl + '/pages',
+        url: serverBaseUrl + '/content' + page.id,
         data: JSON.stringify(page),
         crossDomain: true
       }).then(function (response) {
@@ -76,6 +66,19 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
       });
 
       return deferred.promise;
+    },
+    ratePage: function (page, rating, email) {
+      return $http({
+        method: "POST",
+        url: serverBaseUrl + '/content/',
+        data: JSON.stringify({page: page, rating: rating, email: email}),
+        crossDomain: true
+      }).then(function (response) {
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
     }
   }
 }]);
@@ -115,7 +118,6 @@ services.factory('UserAuthentication', ['$q', '$http', function ($q, $http) {
         console.log(responseError);
         return responseError;
       });
-
 
       return deferred.promise;
     },

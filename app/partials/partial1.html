@@ -1,16 +1,16 @@
 <p>This is the partial for view 1.</p>
 
 <div ng-repeat="page in pages">
-  youtube: {{page.youtubeLink}}<br/>
+  youtube: {{page.video}}<br/>
   description: {{page.description}}<br/>
   title: {{page.title}}<br/>
   rating: {{page.rating}}<br/>
+  <button class="btn btn-warning" ng-click="setPageBeingEdited(page)">edit</button><br/>
   ----------------<br/>
 </div>
 
-
 <div ng-include="'partials/addPage.html'"></div>
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
   <form ng-submit="submit()">
     <div class="row">
@@ -21,10 +21,28 @@
       <input ng-model="newPage.description" required type="text" class="form-control" placeholder="Description">
     </div>
     <div class="top-buffer row">
-      <input ng-model="newPage.youtubeLink" required type="text" class="form-control" placeholder="Youtube Url">
+      <input ng-model="newPage.video" required type="text" class="form-control" placeholder="Youtube Url">
     </div>
     <div class="top-buffer row">
       <button type="submit" name="submit" class="btn btn-info btn-block">Add Page</button>
     </div>
   </form>
+
+  <form >
+    <div class="row">
+      <input ng-model="pageBeingEdited.title" type="text" class="form-control" placeholder="Page Title">
+    </div>
+
+    <div class="top-buffer row">
+      <input ng-model="pageBeingEdited.description" type="text" class="form-control" placeholder="Description">
+    </div>
+    <div class="top-buffer row">
+      <input ng-model="pageBeingEdited.video" type="text" class="form-control" placeholder="Youtube Url">
+    </div>
+    <div class="top-buffer btn-group">
+      <button  ng-click="editPage()" class="btn btn-info ">Save Page</button>
+      <button  ng-click="cancelEdit()" class="btn btn-warning ">Cancel</button>
+    </div>
+  </form>
+
 </div>
