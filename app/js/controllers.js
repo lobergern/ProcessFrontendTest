@@ -14,8 +14,13 @@ controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', functio
 
   $scope.getPages();
 
-  $scope.setPageBeingViewed = function(page){
-    PageManager.pageBeingViewed = page;
+  $scope.pageObserverCallback = function (pages) {
+    $scope.pages = pages;
+  };
+  PageManager.registerPageObserverCallback($scope.pageObserverCallback);
+
+  $scope.setPageBeingViewed = function (page) {
+    PageManager.setPageBeingViewed(page);
   }
 }]);
 
@@ -29,6 +34,7 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', fu
       $scope.pages = response.data;
     });
   };
+
 
   $scope.submit = function () {
     PageManager.addPage({video: $scope.newPage.video, description: $scope.newPage.description, title: $scope.newPage.title}).then(function (response) {
@@ -44,27 +50,22 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', fu
 
   $scope.setPageBeingEdited = function (page) {
     $scope.copyOfPageBeingEdited = $.extend({}, page);
-    $scope.pageBeingEdited = page;
+    PageManager.pageBeingEdited=page;
   };
 
   $scope.saveEdit = function () {
-    if ($scope.pageBeingEdited == null) {
-      alert('no page being edited')
-    } else {
-      PageManager.editPage($scope.copyOfPageBeingEdited).then(function (response) {
-        if (response.status == 200) {
-          $scope.pages.splice($scope.pages.indexOf($scope.pageBeingEdited), 1, $scope.copyOfPageBeingEdited);
-          $scope.pageBeingEdited = null;
-          $scope.copyOfPageBeingEdited = null;
-        } else {
-          var message = response.data.error;
-          if (message == null || message.length < 1) {
-            message = "Error code " + response.status;
-          }
-          $scope.editError = {Message: "Could not edit Page: " + message};
+    PageManager.editPage($scope.copyOfPageBeingEdited).then(function (response) {
+      if (response.status == 200) {
+        $scope.copyOfPageBeingEdited = null;
+        $scope.getPages();
+      } else {
+        var message = response.data.error;
+        if (message == null || message.length < 1) {
+          message = "Error code " + response.status;
         }
-      });
-    }
+        $scope.editError = {Message: "Could not edit Page: " + message};
+      }
+    });
   };
 
   $scope.login = function () {
@@ -82,8 +83,8 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', fu
   };
 
   $scope.cancelEdit = function () {
-    $scope.pageBeingEdited = null;
     $scope.copyOfPageBeingEdited = null;
+    PageManager.setPageBeingEdited(null);
   };
 
   $scope.getPages();
@@ -142,7 +143,13 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
 }]);
 
 controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {
-  $scope.page = PageManager.pageBeingViewed;
+  $scope.page = PageManager.getPageBeingViewed();
+
+  $scope.pageBeingViewedObserverCallback = function (pageBeingViewed) {
+    $scope.page = pageBeingViewed;
+  };
+  PageManager.registerPageBeingViewedObserverCallback($scope.pageBeingViewedObserverCallback);
+
 
   $scope.editPage = function () {
     PageManager.pageBeingEdited = $scope.page;
