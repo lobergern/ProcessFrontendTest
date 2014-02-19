@@ -7,8 +7,7 @@ var serverBaseUrl = 'http://155.92.66.220:8080';
 var services = angular.module('myApp.services', []);
 
 services.factory('PageManager', ['$q', '$http', function ($q, $http) {
-  var pageBeingEdited = null;
-  var pageBeingViewed = null;
+  var sharedPageInfo = {pageBeingEdited:null,pageBeingViewed:null};
   var pages = [];
   return {
     getPages: function () {
@@ -46,7 +45,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
       return deferred.promise;
     },
     editPage: function (page) {
-      $http({
+      return $http({
         method: "PUT",
         url: serverBaseUrl + '/content/' + page.id,
         data: JSON.stringify({title:page.title, video:page.video, description:page.description}),
@@ -59,7 +58,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    pageBeingEdited: pageBeingEdited,
+    pageBeingEdited: sharedPageInfo.pageBeingEdited,
     pageBeingViewed: pageBeingViewed,
     ratePage: function (page, rating, email) {
       return $http({

@@ -3,6 +3,22 @@
 /* Controllers */
 
 var controllers = angular.module('myApp.controllers', []);
+
+controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager) {
+
+  $scope.getPages = function () {
+    PageManager.getPages().then(function (response) {
+      $scope.pages = response.data;
+    });
+  };
+
+  $scope.getPages();
+
+  $scope.setPageBeingViewed = function(page){
+    PageManager.pageBeingViewed = page;
+  }
+}]);
+
 controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', function ($scope, PageManager, Authentication) {
   $scope.pageBeingEdited = null;
   $scope.copyOfPageBeingEdited = null;
@@ -73,9 +89,6 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', fu
   $scope.getPages();
 }]);
 
-controllers.controller('MyCtrl2', [function () {
-
-}]);
 
 controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
   $scope.editPage = function () {
