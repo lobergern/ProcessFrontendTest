@@ -3,8 +3,10 @@
 /* Controllers */
 
 var controllers = angular.module('myApp.controllers', []);
-controllers.controller('MyCtrl1', ['$scope', 'PageManager', function ($scope, PageManager) {
+controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', function ($scope, PageManager, Authentication) {
   $scope.pageBeingEdited = null;
+  $scope.copyOfPageBeingEdited = null;
+  $scope.user = null;
 
   $scope.getPages = function () {
     PageManager.getPages().then(function (response) {
@@ -17,7 +19,8 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', function ($scope, Pa
   };
 
   $scope.setPageBeingEdited = function (page) {
-    $scope.pageBeingEdited = $.extend({}, page);
+    $scope.copyOfPageBeingEdited = $.extend({}, page);
+    $scope.pageBeingEdited = page;
   };
 
   $scope.editPage = function () {
@@ -26,7 +29,9 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', function ($scope, Pa
     } else {
       PageManager.editPage($scope.pageBeingEdited).then(function (response) {
         if (response.status == 200) {
+          $scope.pages.splice($scope.pages.indexOf($scope.pageBeingEdited), 1, $scope.copyOfPageBeingEdited);
           $scope.pageBeingEdited = null;
+          $scope.copyOfPageBeingEdited = null;
         } else {
           var message = response.data.error;
           if (message == null || message.length < 1) {
@@ -38,8 +43,23 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', function ($scope, Pa
     }
   };
 
+  $scope.login = function () {
+    Authentication.login($scope.user.email, $scope.user.password).then(function (response) {
+        if (response.status == 200) {
+          $scope.currentUser = response.data;
+        } else {
+          var message = response.data.error;
+          if (message == null || message.length < 1) {
+            message = "Error code " + response.status;
+          }
+          $scope.loginError = {Message: "Could not log in: " + message};
+        }
+    });
+  };
+
   $scope.cancelEdit = function () {
     $scope.pageBeingEdited = null;
+    $scope.copyOfPageBeingEdited = null;
   };
 
   $scope.getPages();
