@@ -1,12 +1,15 @@
 'use strict';
 
-var serverBaseUrl = 'http://155.92.75.163:8080';
+var serverBaseUrl = 'http://155.92.66.220:8080';
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
 var services = angular.module('myApp.services', []);
 
 services.factory('PageManager', ['$q', '$http', function ($q, $http) {
+  var pageBeingEdited = null;
+  var pageBeingViewed = null;
+  var pages = [];
   return {
     getPages: function () {
       return $http({
@@ -14,6 +17,8 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         url: serverBaseUrl + '/content',
         crossDomain: true
       }).then(function (response) {
+        pages = response.data;
+        response.data = pages;
         return response;
       }, function (responseError) {
         console.log(responseError);
@@ -27,6 +32,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         data: JSON.stringify(page),
         crossDomain: true
       }).then(function (response) {
+        pages.push(response.data);
         return response;
       }, function (responseError) {
         console.log(responseError);
@@ -42,16 +48,19 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
     editPage: function (page) {
       $http({
         method: "PUT",
-        url: serverBaseUrl + '/content' + page.id,
-        data: JSON.stringify(page),
+        url: serverBaseUrl + '/content/' + page.id,
+        data: JSON.stringify({title:page.title, video:page.video, description:page.description}),
         crossDomain: true
       }).then(function (response) {
+        pages.splice(pages.indexOf(pageBeingEdited), 1, response.data);
         return response;
       }, function (responseError) {
         console.log(responseError);
         return responseError;
       });
     },
+    pageBeingEdited: pageBeingEdited,
+    pageBeingViewed: pageBeingViewed,
     ratePage: function (page, rating, email) {
       return $http({
         method: "POST",
@@ -66,7 +75,8 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
       });
     }
   }
-}]);
+}])
+;
 
 services.factory('Authentication', ['$q', '$http', function ($q, $http) {
   var currentUser = null;
@@ -78,7 +88,7 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
         data: JSON.stringify({email: email, password: password}),
         crossDomain: true
       }).then(function (response) {
-        currentUser = response.data;
+        currentUser.currentUser = response.data;
         return response;
       }, function (responseError) {
         console.log(responseError);
