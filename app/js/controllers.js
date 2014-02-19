@@ -50,7 +50,7 @@ controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', fu
 
   $scope.setPageBeingEdited = function (page) {
     $scope.copyOfPageBeingEdited = $.extend({}, page);
-    PageManager.pageBeingEdited=page;
+    PageManager.pageBeingEdited = page;
   };
 
   $scope.saveEdit = function () {
@@ -156,8 +156,8 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
     $location.path('editPage');
   };
 
-  $scope.ratePage = function (rating) {
-    PageManager.ratePage($scope.page, rating, Authentication.getCurrentUser.email).then(function (response) {
+  $scope.ratePage = function () {
+    PageManager.ratePage($scope.page, $scope.rating, Authentication.getCurrentUser.email).then(function (response) {
 
     });
   };
