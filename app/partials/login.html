@@ -7,7 +7,7 @@
         <label class="control-label"><strong>Password:</strong></label>
         <input type="password" ng-model="loginInfo.password" class="input-mini">
         <input type="submit" value="Login" ng-click="login()" class="btn btn-primary">
-        <span class="error pointer" popover="Click to dismiss" popover-placement="right" popover-trigger="mouseenter" ng-click="loginError=null" ng-show="loginError">
+        <span class="error pointer" popover="Click to dismiss" popover-placement="right" popover-trigger="mouseenter" ng-click="loginError.Message = null" ng-show="loginError.Message">
           {{loginError.Message}}
         </span>
       </fieldset>
