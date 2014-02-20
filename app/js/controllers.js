@@ -125,6 +125,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
           $scope.rateError = {Message: "Could not rate Page: " + message};
           $scope.rating = $scope.previousRating;
         } else {
+          $scope.previousRating = $scope.rating;
           $scope.page.rating = response.data.rating;
         }
       });
