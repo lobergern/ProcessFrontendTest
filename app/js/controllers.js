@@ -100,7 +100,6 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
   };
   PageManager.registerPageBeingViewedObserverCallback($scope.pageBeingViewedObserverCallback);
 
-
   $scope.editPage = function () {
     PageManager.setPageBeingEdited($scope.page);
     $location.path('editPage');

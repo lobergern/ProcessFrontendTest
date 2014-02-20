@@ -85,7 +85,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
     setPageBeingEdited: function (page) {
       pageBeingEdited = page
     },
-    getPageBeingEdited: function(){
+    getPageBeingEdited: function () {
       return pageBeingEdited
     },
     setPageBeingViewed: function (page) {
@@ -118,7 +118,7 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
   var userChangeObserverCallbacks = [];
 
   function notifyUserChangeObservers() {
-    $.each(userChangeObserverCallbacks, function (callback) {
+    angular.forEach(userChangeObserverCallbacks, function (callback) {
       callback(currentUser);
     });
   }
@@ -131,7 +131,8 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
         data: JSON.stringify({email: email, password: password}),
         crossDomain: true
       }).then(function (response) {
-        currentUser.currentUser = response.data;
+        currentUser = response.data;
+        notifyUserChangeObservers();
         return response;
       }, function (responseError) {
         console.log(responseError);
@@ -144,6 +145,7 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
     },
     logout: function () {
       currentUser = null;
+      notifyUserChangeObservers();
     }
   }
 }]);
