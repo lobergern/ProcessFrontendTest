@@ -24,11 +24,11 @@ controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', functio
   }
 }]);
 
-controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
+controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {
   $scope.page = $.extend({}, PageManager.getPageBeingEdited());
 
   $scope.saveEdit = function () {
-    PageManager.editPage($scope.page).then(function (response) {
+    PageManager.editPage($scope.page, Authentication.currentUser.session).then(function (response) {
       if (response.status == 200) {
         PageManager.setPageBeingEdited(null);
         $location.path("/index");
@@ -48,9 +48,9 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', fu
   };
 }]);
 
-controllers.controller('AddPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
+controllers.controller('AddPageCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {
   $scope.addPage = function () {
-    PageManager.addPage({video: $scope.page.video, description: $scope.page.description, title: $scope.page.title}).then(function (response) {
+    PageManager.addPage($scope.page, Authentication.currentUser.session).then(function (response) {
       if (response.status == 200) {
         $location.path('/index');
       } else {
@@ -115,7 +115,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
   };
 
   $scope.$watch('rating', function () {
-    if ($scope.rating && $scope.previousRating && $scope.rating != $scope.previousRating) {
+    if ($scope.rating && $scope.rating != $scope.previousRating) {
       PageManager.ratePage($scope.page, $scope.rating, Authentication.currentUser.session).then(function (response) {
         if (response.status != 200) {
           var message = response.data.error || response.data.message;
@@ -136,12 +136,13 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
   $scope.$watch('page', function () {
     if ($scope.page) {
-      $scope.previousRating = null;
       PageManager.getSessionRatingForPage($scope.page, Authentication.currentUser.session).then(function (response) {
         if (response.status == 200) {
+          $scope.previousRating = response.data.rating;
           $scope.rating = response.data.rating;
-        }else{
+        } else {
           $scope.rating = null;
+          $scope.previousRating = 0;
         }
       });
     }

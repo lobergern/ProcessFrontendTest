@@ -45,11 +45,12 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
     registerPageBeingViewedObserverCallback: function (callback) {
       pageBeingViewedObserverCallbacks.push(callback);
     },
-    addPage: function (page) {
+    addPage: function (page, sessionToken) {
       return $http({
         method: "POST",
         url: serverBaseUrl + '/content',
         data: JSON.stringify(page),
+        headers: {'Authorization': sessionToken},
         crossDomain: true,
         timeout: 2000
       }).then(function (response) {
@@ -61,20 +62,21 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    removePage: function (page) {
+    removePage: function (page, sessionToken) {
       var deferred = $q.defer();
       pages.splice(pages.indexOf(page), 1);
       deferred.resolve({data: 'success', status: 200});
       notifyPageObservers();
       return deferred.promise;
     },
-    editPage: function (page) {
+    editPage: function (page, sessionToken) {
       return $http({
         method: "PUT",
         url: serverBaseUrl + '/content/' + page.id,
         data: JSON.stringify({title: page.title, video: page.video, description: page.description}),
+        headers: {'Authorization': sessionToken},
         crossDomain: true,
-        timeout: 2000,
+        timeout: 2000
       }).then(function (response) {
         pages.splice(pages.indexOf(pageBeingEdited), 1, response.data);
         notifyPageObservers();
