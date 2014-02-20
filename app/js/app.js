@@ -13,8 +13,30 @@ var application = angular.module('myApp', [
 
 application.config(['$routeProvider', function ($routeProvider) {
   $routeProvider.when('/welcome', {templateUrl: 'partials/welcome.html'});
-  $routeProvider.when('/pageDetails', {templateUrl: 'partials/page_details.html', controller: 'PageDetailsCtrl'});
-  $routeProvider.when('/editPage', {templateUrl: 'partials/edit_page.html', controller: 'EditPageCtrl'});
+  $routeProvider.when('/pageDetails', {
+    templateUrl: 'partials/page_details.html',
+    controller: 'PageDetailsCtrl',
+    resolve: {
+      page: function (PageManager, $location) {
+        var thePage = PageManager.getPageBeingViewed();
+        if (!thePage) {
+          $location.path('/welcome');
+        }
+      }
+    }
+  });
+  $routeProvider.when('/editPage', {
+    templateUrl: 'partials/edit_page.html',
+    controller: 'EditPageCtrl',
+    resolve: {
+      page: function (PageManager, $location) {
+        var thePage = PageManager.getPageBeingEdited();
+        if (!thePage) {
+          $location.path('/welcome');
+        }
+      }
+    }
+  });
   $routeProvider.when('/addPage', {templateUrl: 'partials/add_page.html', controller: 'AddPageCtrl'});
   $routeProvider.otherwise({redirectTo: '/welcome'});
 }]);
