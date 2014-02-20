@@ -8,10 +8,12 @@ var services = angular.module('myApp.services', []);
 
 services.factory('PageManager', ['$q', '$http', function ($q, $http) {
   var pageBeingEdited = null;
-  var pageBeingViewed = null;
+  var pageBeingViewed = $.cookie('pageBeingViewed') ? JSON.parse($.cookie('pageBeingViewed')) : null;
   var pages = [];
   var pageObserverCallbacks = [];
   var pageBeingViewedObserverCallbacks = [];
+
+
 
   var notifyPageObservers = function () {
     angular.forEach(pageObserverCallbacks, function (callback) {
@@ -114,7 +116,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
 ;
 
 services.factory('Authentication', ['$q', '$http', function ($q, $http) {
-  var currentUser = null;
+  var currentUser = $.cookie('currentApplicationUser') ? JSON.parse($.cookie('currentApplicationUser')) : null;
   var userChangeObserverCallbacks = [];
 
   function notifyUserChangeObservers() {

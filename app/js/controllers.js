@@ -121,3 +121,16 @@ controllers.controller('HeaderCtrl', ['$scope', '$location', function ($scope, $
     $location.path('/welcome');
   }
 }]);
+
+controllers.controller('CookieCtrl', ['Authentication', 'PageManager', function(Authentication, PageManager){
+  function pageBeingViewedObserverCallback(page){
+    $.cookie('pageBeingViewed', JSON.stringify(page));
+  }
+
+  function userChangeObserverCallback(user){
+    $.cookie('currentApplicationUser', JSON.stringify(user));
+  }
+
+  PageManager.registerPageBeingViewedObserverCallback(pageBeingViewedObserverCallback);
+  Authentication.registerUserChangeCallback(userChangeObserverCallback);
+}]);
