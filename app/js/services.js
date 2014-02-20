@@ -126,6 +126,10 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
           if (!pageFound) {
             if (page.id == response.data.id) {
               pages.indexOf[page] = response.data;
+              if(pageBeingViewed.id = page.id){
+                pageBeingViewed = page;
+                notifyPageBeingViewedObservers();
+              }
               var pageFound = true;
             }
           }

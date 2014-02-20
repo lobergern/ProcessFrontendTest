@@ -5,7 +5,7 @@
 <div class="col-lg-5 col-md-6">
   <div ng-hide="currentUser==null">
     Your Rating:
-    <rating value="rating" max="5" readonly="currentUser==null"></rating>
+    <rating value="rating" max="5" readonly="currentUser==null"></rating>{{rating}}
      <span class="error pointer" popover="Click to dismiss" popover-placement="top" popover-trigger="mouseenter" ng-click="rateError=null" ng-show="rateError">
           {{rateError.Message}}
      </span>
@@ -19,6 +19,6 @@
   <div ng-bind-html="getPageDescription()"></div>
 
 </div>
-<div style="height:500px" class="col-lg-7 col-md-6">
+<div ng-cloak style="height:500px" class="col-lg-7 col-md-6">
   <div my-youtube code="page.video"></div>
 </div>
