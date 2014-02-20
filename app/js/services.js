@@ -12,7 +12,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
   var pageBeingViewedObserverCallbacks = [];
 
 
-
   var notifyPageObservers = function () {
     angular.forEach(pageObserverCallbacks, function (callback) {
       callback(pages);
@@ -30,7 +29,8 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
       return $http({
         method: "GET",
         url: serverBaseUrl + '/content',
-        crossDomain: true
+        crossDomain: true,
+        timeout: 2000
       }).then(function (response) {
         pages = response.data;
         return response;
@@ -50,7 +50,8 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         method: "POST",
         url: serverBaseUrl + '/content',
         data: JSON.stringify(page),
-        crossDomain: true
+        crossDomain: true,
+        timeout: 2000
       }).then(function (response) {
         pages.push(response.data);
         notifyPageObservers();
@@ -72,7 +73,8 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         method: "PUT",
         url: serverBaseUrl + '/content/' + page.id,
         data: JSON.stringify({title: page.title, video: page.video, description: page.description}),
-        crossDomain: true
+        crossDomain: true,
+        timeout: 2000,
       }).then(function (response) {
         pages.splice(pages.indexOf(pageBeingEdited), 1, response.data);
         notifyPageObservers();
@@ -95,13 +97,37 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
     getPageBeingViewed: function () {
       return pageBeingViewed;
     },
-    ratePage: function (page, rating, email) {
+    getSessionRatingForPage: function (page, sessionToken) {
       return $http({
-        method: "POST",
-        url: serverBaseUrl + '/content',
-        data: JSON.stringify({page: page, rating: rating, email: email}),
+        method: "GET",
+        url: serverBaseUrl + '/content/' + page.id + '/rate',
+        headers: {'Authorization': sessionToken},
+        timeout: 2000,
         crossDomain: true
       }).then(function (response) {
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
+    },
+    ratePage: function (page, rating, sessionToken) {
+      return $http({
+        method: "POST",
+        url: serverBaseUrl + '/content/' + page.id + '/rate',
+        data: JSON.stringify({rating: rating}),
+        headers: {'Authorization': sessionToken},
+        timeout: 2000,
+        crossDomain: true
+      }).then(function (response) {
+        angular.forEach(pages, function (page) {
+          if (!pageFound) {
+            if (page.id == response.data.id) {
+              pages.indexOf[page] = response.data;
+              var pageFound = true;
+            }
+          }
+        });
         notifyPageObservers();
         return response;
       }, function (responseError) {
@@ -129,7 +155,8 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
         method: "POST",
         url: serverBaseUrl + '/user',
         data: JSON.stringify({email: email, password: password}),
-        crossDomain: true
+        crossDomain: true,
+        timeout: 2000
       }).then(function (response) {
         currentUser = response.data;
         notifyUserChangeObservers();

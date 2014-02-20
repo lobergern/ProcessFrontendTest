@@ -1,18 +1,6 @@
 <form>
-  <div class="input-group">
-    <span class="input-group-addon">Page Tite:</span>
-    <input ng-model="page.title" type="text" class="form-control" placeholder="Title">
-  </div>
-  <div class="top-buffer input-group">
-    <span class="input-group-addon">Youtube Code:</span>
-    <input ng-model="page.video" type="text" class="form-control" placeholder="Youtube video code">
-  </div>
-  <div class="top-buffer">
-    Below, enter the description for the video. Feel free to use HTML.
-  </div>
-  <div>
-    <textarea class="form-control" ng-model="page.description" placeholder="Description HTML" rows="3"></textarea>
-  </div>
+  <page-information-inputs page="page"></page-information-inputs>
+
   <div class="top-buffer right-buffer pull-right btn-group">
     <button ng-click="saveEdit()" class="btn btn-info ">Save Page</button>
     <button ng-click="cancelEdit()" class="btn btn-warning ">Cancel</button>

@@ -21,3 +21,11 @@ directives.directive('myYoutube', function ($sce) {
     }
   }
 });
+
+directives.directive('pageInformationInputs', function () {
+  return{
+    restrict: 'E',
+    scope: {page: '='},
+    templateUrl: 'partials/page_information_inputs.html'
+  }
+});

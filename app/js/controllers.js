@@ -33,7 +33,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', fu
         PageManager.setPageBeingEdited(null);
         $location.path("/index");
       } else {
-        var message = response.data.error;
+        var message = response.data.error || response.data.message;
         if (message == null || message.length < 1) {
           message = "Error code " + response.status;
         }
@@ -94,12 +94,16 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
 
 controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', '$sce', function ($scope, PageManager, Authentication, $location, $sce) {
   $scope.page = PageManager.getPageBeingViewed();
-  $scope.rating = $scope.page.rating;
+  $scope.currentUser = Authentication.currentUser;
 
+  $scope.userChangeObserverCallback = function (user) {
+    $scope.currentUser = user;
+  };
   $scope.pageBeingViewedObserverCallback = function (pageBeingViewed) {
     $scope.page = pageBeingViewed;
   };
   PageManager.registerPageBeingViewedObserverCallback($scope.pageBeingViewedObserverCallback);
+  Authentication.registerUserChangeCallback($scope.userChangeObserverCallback);
 
   $scope.editPage = function () {
     PageManager.setPageBeingEdited($scope.page);
@@ -110,11 +114,39 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
     return $sce.trustAsHtml($scope.page.description);
   };
 
-  $scope.ratePage = function () {
-    PageManager.ratePage($scope.page, $scope.rating, Authentication.getCurrentUser.email).then(function (response) {
+  $scope.$watch('rating', function () {
+    if ($scope.rating && $scope.previousRating && $scope.rating != $scope.previousRating) {
+      PageManager.ratePage($scope.page, $scope.rating, Authentication.currentUser.session).then(function (response) {
+        if (response.status != 200) {
+          var message = response.data.error || response.data.message;
+          if (message == null || message.length < 1) {
+            message = "Error code " + response.status;
+          }
+          $scope.rateError = {Message: "Could not rate Page: " + message};
+          $scope.rating = $scope.previousRating;
+        } else {
+          $scope.page.rating = response.data.rating;
+        }
+      });
+    } else {
+      $scope.previousRating = $scope.rating;
+    }
+  });
 
-    });
-  };
+  $scope.$watch('page', function () {
+    if ($scope.page) {
+      $scope.previousRating = null;
+      PageManager.getSessionRatingForPage($scope.page, Authentication.currentUser.session).then(function (response) {
+        if (response.status == 200) {
+          $scope.rating = response.data.rating;
+        }else{
+          $scope.rating = null;
+        }
+      });
+    }
+  });
+
+
 }]);
 
 controllers.controller('HeaderCtrl', ['$scope', '$location', function ($scope, $location) {

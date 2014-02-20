@@ -1,12 +1,23 @@
-<div class="col-lg-5 col-md-6">
-  Page Rating:
-  <rating value="page.rating" max="10" readonly="false" on-hover="hoveringOver(value)" on-leave="overStar = null"></rating>
-  youtube: {{page.video}}<br/>title: {{page.title}}<br/>rating: {{rating}}<br/>
-
-  <div ng-bind-html="getPageDescription()"></div>
+<legend>
+  {{page.title}}
   <button class="btn btn-warning" ng-click="editPage()">edit</button>
-  <br/><input type="text" ng-model="rating">
-  <button class="btn btn-primary" ng-click="ratePage()">rate</button>
+</legend>
+<div class="col-lg-5 col-md-6">
+  <div ng-hide="currentUser==null">
+    Your Rating:
+    <rating value="rating" max="5" readonly="currentUser==null"></rating>
+     <span class="error pointer" popover="Click to dismiss" popover-placement="top" popover-trigger="mouseenter" ng-click="rateError=null" ng-show="rateError">
+          {{rateError.Message}}
+     </span>
+  </div>
+  Average user rating:
+  <rating value="page.rating" max="5" readonly="true"></rating>
+  {{page.rating}}
+  <br/>
+
+  <div class="top-buffer">Page description:</div>
+  <div ng-bind-html="getPageDescription()"></div>
+
 </div>
 <div style="height:500px" class="col-lg-7 col-md-6">
   <div my-youtube code="page.video"></div>
