@@ -1,7 +1,7 @@
 <div class="col-lg-5 col-md-6">
   Page Rating:
   <rating value="page.rating" max="10" readonly="false" on-hover="hoveringOver(value)" on-leave="overStar = null"></rating>
-  youtube: {{page.video}}<br/>title: {{page.title}}<br/>rating: {{page.rating}}<br/>
+  youtube: {{page.video}}<br/>title: {{page.title}}<br/>rating: {{rating}}<br/>
 
   <div ng-bind-html="getPageDescription()"></div>
   <button class="btn btn-warning" ng-click="editPage()">edit</button>

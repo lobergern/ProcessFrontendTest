@@ -2,8 +2,6 @@
 
 var serverBaseUrl = 'http://75.86.148.205:8080';
 
-// Demonstrate how to register services
-// In this case it is a simple value service.
 var services = angular.module('myApp.services', []);
 
 services.factory('PageManager', ['$q', '$http', function ($q, $http) {

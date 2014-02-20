@@ -94,6 +94,7 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
 
 controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', '$sce', function ($scope, PageManager, Authentication, $location, $sce) {
   $scope.page = PageManager.getPageBeingViewed();
+  $scope.rating = $scope.page.rating;
 
   $scope.pageBeingViewedObserverCallback = function (pageBeingViewed) {
     $scope.page = pageBeingViewed;
@@ -105,7 +106,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
     $location.path('editPage');
   };
 
-  $scope.getPageDescription = function() {
+  $scope.getPageDescription = function () {
     return $sce.trustAsHtml($scope.page.description);
   };
 
@@ -122,12 +123,12 @@ controllers.controller('HeaderCtrl', ['$scope', '$location', function ($scope, $
   }
 }]);
 
-controllers.controller('CookieCtrl', ['Authentication', 'PageManager', function(Authentication, PageManager){
-  function pageBeingViewedObserverCallback(page){
+controllers.controller('CookieCtrl', ['Authentication', 'PageManager', function (Authentication, PageManager) {
+  function pageBeingViewedObserverCallback(page) {
     $.cookie('pageBeingViewed', JSON.stringify(page));
   }
 
-  function userChangeObserverCallback(user){
+  function userChangeObserverCallback(user) {
     $.cookie('currentApplicationUser', JSON.stringify(user));
   }
 
