@@ -8,29 +8,23 @@
   <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
 </head>
 <body>
-<div class="well col-lg-1 col-md-2 col-sm-2" ng-controller="NavCtrl">
-  <nav ng-cloak>
-    <ul class="nav nav-pills nav-stacked span2">
-      <li><a href="#/addPage">Add Page</a></li>
-      <li ng-repeat="page in pages track by $index">
-        <a href="#/pageDetails" ng-click="setPageBeingViewed(page)">{{page.title}}</a></li>
-    </ul>
-  </nav>
-</div>
+<legend ng-controller="HeaderCtrl">
+  <div class="left-buffer pointer" ng-click="goHome()"><h1>Software Process Tutorials</h1></div>
+</legend>
 
-<div class="col-lg-offset-1 col-md-offset-2 col-sm-offset-2">
+<div class="col-xs-2 scroll-on-overflow  col-lg-2 col-md-2 col-sm-2" ng-include="'partials/vertical_nav.html'"></div>
+
+<div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-2">
   <div class="left-buffer" ng-include="'partials/login.html'"></div>
   <div class="left-buffer">
     <div ng-view></div>
   </div>
 </div>
 
-
 <!-- In production use:
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
 -->
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script src="lib/angular/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>
 <script src="lib/angular/angular-route.js"></script>
 <script src="lib/jquery-1.11.0.min.js"></script>
 <script src="js/app.js"></script>

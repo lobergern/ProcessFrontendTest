@@ -25,12 +25,12 @@ controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', functio
 }]);
 
 controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
-  $scope.page = $.extend({}, PageManager.pageBeingEdited);
+  $scope.page = $.extend({}, PageManager.getPageBeingEdited());
 
-  $scope.editPage = function () {
+  $scope.saveEdit = function () {
     PageManager.editPage($scope.page).then(function (response) {
       if (response.status == 200) {
-        PageManager.pageBeingEdited = null;
+        PageManager.setPageBeingEdited(null);
         $location.path("/index");
       } else {
         var message = response.data.error;
@@ -43,7 +43,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', fu
   };
 
   $scope.cancelEdit = function () {
-    PageManager.pageBeingEdited = null;
+    PageManager.setPageBeingEdited(null);
     $location.path("/index");
   };
 }]);
@@ -86,13 +86,13 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
     });
   };
 
-  $scope.logout = function(){
+  $scope.logout = function () {
     Authentication.logout();
   }
 
 }]);
 
-controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {
+controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', '$sce', function ($scope, PageManager, Authentication, $location, $sce) {
   $scope.page = PageManager.getPageBeingViewed();
 
   $scope.pageBeingViewedObserverCallback = function (pageBeingViewed) {
@@ -102,8 +102,12 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
 
   $scope.editPage = function () {
-    PageManager.pageBeingEdited = $scope.page;
+    PageManager.setPageBeingEdited($scope.page);
     $location.path('editPage');
+  };
+
+  $scope.getPageDescription = function() {
+    return $sce.trustAsHtml($scope.page.description);
   };
 
   $scope.ratePage = function () {
@@ -111,4 +115,10 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
     });
   };
+}]);
+
+controllers.controller('HeaderCtrl', ['$scope', '$location', function ($scope, $location) {
+  $scope.goHome = function () {
+    $location.path('/welcome');
+  }
 }]);

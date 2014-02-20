@@ -1,6 +1,11 @@
-youtube: {{page.video}}<br/>
-description: {{page.description}}<br/>
-title: {{page.title}}<br/>
-rating: {{page.rating}}<br/>
-<button class="btn btn-warning" ng-click="editPage()">edit</button><br/>
-<input type="text" ng-model="rating"><button class="btn btn-primary" ng-click="ratePage()">rate</button>
+<div class="col-lg-5 col-md-6">
+  youtube: {{page.video}}<br/>title: {{page.title}}<br/>rating: {{page.rating}}<br/>
+
+  <div ng-bind-html="getPageDescription()"></div>
+  <button class="btn btn-warning" ng-click="editPage()">edit</button>
+  <br/><input type="text" ng-model="rating">
+  <button class="btn btn-primary" ng-click="ratePage()">rate</button>
+</div>
+<div style="height:500px" class="col-lg-7 col-md-6">
+  <div my-youtube code="page.video"></div>
+</div>

@@ -54,3 +54,7 @@
     padding-left: 10px;
     color: red;
 }
+
+.scroll-on-overflow{
+       overflow-y: auto;
+}

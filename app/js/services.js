@@ -82,7 +82,12 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    pageBeingEdited: pageBeingEdited,
+    setPageBeingEdited: function (page) {
+      pageBeingEdited = page
+    },
+    getPageBeingEdited: function(){
+      return pageBeingEdited
+    },
     setPageBeingViewed: function (page) {
       pageBeingViewed = page;
       notifyPageBeingViewedObservers();
@@ -112,8 +117,8 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
   var currentUser = null;
   var userChangeObserverCallbacks = [];
 
-  function notifyUserChangeObservers(){
-    $.each(userChangeObserverCallbacks, function(callback){
+  function notifyUserChangeObservers() {
+    $.each(userChangeObserverCallbacks, function (callback) {
       callback(currentUser);
     });
   }
@@ -134,7 +139,7 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
       });
     },
     currentUser: currentUser,
-    registerUserChangeCallback: function(callback){
+    registerUserChangeCallback: function (callback) {
       userChangeObserverCallbacks.push(callback);
     },
     logout: function () {

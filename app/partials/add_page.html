@@ -1,15 +1,18 @@
 <form >
-  <div >
-    <input required ng-model="page.title" type="text" class="form-control" placeholder="Page Title">
+<div class="input-group">
+    <span class="input-group-addon">Page Tite:</span>
+    <input ng-model="page.title" type="text" class="form-control" placeholder="Title">
   </div>
-
+  <div class="top-buffer input-group">
+    <span class="input-group-addon">Youtube Code:</span>
+    <input ng-model="page.video" type="text" class="form-control" placeholder="Youtube video code">
+  </div>
   <div class="top-buffer ">
     <input ng-model="page.description" required type="text" class="form-control" placeholder="Description">
   </div>
+
   <div class="top-buffer ">
-    <input ng-model="page.video" required type="text" class="form-control" placeholder="Video Url">
-  </div>
-  <div class="top-buffer ">
-    <button type="submit" name="submit" ng-click="addPage()" class="btn btn-info btn-block">Add Page</button>
+    <button type="submit" name="submit" ng-click="addPage()" class="pull-right right-buffer btn btn-primary">Add
+      Page</button>
   </div>
 </form>
