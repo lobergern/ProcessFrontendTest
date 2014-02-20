@@ -110,6 +110,14 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
 
 services.factory('Authentication', ['$q', '$http', function ($q, $http) {
   var currentUser = null;
+  var userChangeObserverCallbacks = [];
+
+  function notifyUserChangeObservers(){
+    $.each(userChangeObserverCallbacks, function(callback){
+      callback(currentUser);
+    });
+  }
+
   return{
     login: function (email, password) {
       return $http({
@@ -125,7 +133,10 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    getCurrentUser: currentUser,
+    currentUser: currentUser,
+    registerUserChangeCallback: function(callback){
+      userChangeObserverCallbacks.push(callback);
+    },
     logout: function () {
       currentUser = null;
     }

@@ -24,76 +24,11 @@ controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', functio
   }
 }]);
 
-controllers.controller('MyCtrl1', ['$scope', 'PageManager', 'Authentication', function ($scope, PageManager, Authentication) {
-  $scope.pageBeingEdited = null;
-  $scope.copyOfPageBeingEdited = null;
-  $scope.user = null;
-
-  $scope.getPages = function () {
-    PageManager.getPages().then(function (response) {
-      $scope.pages = response.data;
-    });
-  };
-
-
-  $scope.submit = function () {
-    PageManager.addPage({video: $scope.newPage.video, description: $scope.newPage.description, title: $scope.newPage.title}).then(function (response) {
-      if (response.status != 200) {
-        var message = response.data.error;
-        if (message == null || message.length < 1) {
-          message = "Error code " + response.status;
-        }
-        $scope.editError = {Message: "Could not add Page: " + message};
-      }
-    });
-  };
-
-  $scope.setPageBeingEdited = function (page) {
-    $scope.copyOfPageBeingEdited = $.extend({}, page);
-    PageManager.pageBeingEdited = page;
-  };
-
-  $scope.saveEdit = function () {
-    PageManager.editPage($scope.copyOfPageBeingEdited).then(function (response) {
-      if (response.status == 200) {
-        $scope.copyOfPageBeingEdited = null;
-        $scope.getPages();
-      } else {
-        var message = response.data.error;
-        if (message == null || message.length < 1) {
-          message = "Error code " + response.status;
-        }
-        $scope.editError = {Message: "Could not edit Page: " + message};
-      }
-    });
-  };
-
-  $scope.login = function () {
-    Authentication.login($scope.user.email, $scope.user.password).then(function (response) {
-      if (response.status == 200) {
-        $scope.currentUser = response.data;
-      } else {
-        var message = response.data.error;
-        if (message == null || message.length < 1) {
-          message = "Error code " + response.status;
-        }
-        $scope.loginError = {Message: "Could not log in: " + message};
-      }
-    });
-  };
-
-  $scope.cancelEdit = function () {
-    $scope.copyOfPageBeingEdited = null;
-    PageManager.setPageBeingEdited(null);
-  };
-
-  $scope.getPages();
-}]);
-
-
 controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
+  $scope.page = $.extend({}, PageManager.pageBeingEdited);
+
   $scope.editPage = function () {
-    PageManager.editPage($scope.pageBeingEdited).then(function (response) {
+    PageManager.editPage($scope.page).then(function (response) {
       if (response.status == 200) {
         PageManager.pageBeingEdited = null;
         $location.path("/index");
@@ -108,13 +43,14 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', '$location', fu
   };
 
   $scope.cancelEdit = function () {
+    PageManager.pageBeingEdited = null;
     $location.path("/index");
   };
 }]);
 
 controllers.controller('AddPageCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager, $location) {
   $scope.addPage = function () {
-    PageManager.addPage({video: $scope.newPage.video, description: $scope.newPage.description, title: $scope.newPage.title}).then(function (response) {
+    PageManager.addPage({video: $scope.page.video, description: $scope.page.description, title: $scope.page.title}).then(function (response) {
       if (response.status == 200) {
         $location.path('/index');
       } else {
@@ -129,8 +65,17 @@ controllers.controller('AddPageCtrl', ['$scope', 'PageManager', '$location', fun
 }]);
 
 controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scope, Authentication) {
+  $scope.loginInfo = null;
+  $scope.currentUser = Authentication.currentUser;
+
+  $scope.userChangeCallback = function (user) {
+    $scope.currentUser = user;
+  };
+
+  Authentication.registerUserChangeCallback($scope.userChangeCallback);
+
   $scope.login = function () {
-    Authentication.login($scope.user.email, $scope.user.password).then(function (response) {
+    Authentication.login($scope.loginInfo.email, $scope.loginInfo.password).then(function (response) {
       if (response.status != 200) {
         var message = response.data.error;
         if (message == null || message.length < 1) {
@@ -140,6 +85,11 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
       }
     });
   };
+
+  $scope.logout = function(){
+    Authentication.logout();
+  }
+
 }]);
 
 controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {

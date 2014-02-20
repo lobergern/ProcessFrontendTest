@@ -1,0 +1,16 @@
+<form>
+  <div >
+    <input ng-model="page.title" type="text" class="form-control" placeholder="Page Title">
+  </div>
+
+  <div class="top-buffer">
+    <input ng-model="page.description" type="text" class="form-control" placeholder="Description">
+  </div>
+  <div class="top-buffer ">
+    <input ng-model="page.video" type="text" class="form-control" placeholder="Youtube Url">
+  </div>
+  <div class="top-buffer btn-group">
+    <button ng-click="saveEdit()" class="btn btn-info ">Save Page</button>
+    <button ng-click="cancelEdit()" class="btn btn-warning ">Cancel</button>
+  </div>
+</form>
