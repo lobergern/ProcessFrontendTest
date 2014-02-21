@@ -98,6 +98,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
   $scope.userChangeObserverCallback = function (user) {
     $scope.currentUser = user;
+    $scope.getCurrentUserRatingForPage();
   };
   $scope.pageBeingViewedObserverCallback = function (pageBeingViewed) {
     $scope.page = pageBeingViewed;
@@ -135,7 +136,11 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
   });
 
   $scope.$watch('page', function () {
-    if ($scope.page) {
+    $scope.getCurrentUserRatingForPage();
+  });
+
+  $scope.getCurrentUserRatingForPage = function () {
+    if ($scope.page && $scope.currentUser) {
       PageManager.getSessionRatingForPage($scope.page, Authentication.currentUser.session).then(function (response) {
         if (response.status == 200) {
           $scope.previousRating = response.data.rating;
@@ -146,8 +151,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
         }
       });
     }
-  });
-
+  }
 
 }]);
 
