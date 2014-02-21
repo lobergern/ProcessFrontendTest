@@ -1,6 +1,6 @@
 <legend>
   {{page.title}}
-  <button class="btn btn-warning" ng-click="editPage()">edit page</button>
+  <button class="btn btn-warning" ng-show="currentUser.role == 'ADMIN'" ng-click="editPage()">edit page</button>
 </legend>
 <div class="col-lg-5 col-md-6">
   <div ng-hide="currentUser==null">

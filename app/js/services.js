@@ -126,7 +126,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
           if (!pageFound) {
             if (page.id == response.data.id) {
               pages.indexOf[page] = response.data;
-              if(pageBeingViewed.id = page.id){
+              if (pageBeingViewed.id = page.id) {
                 pageBeingViewed = page;
                 notifyPageBeingViewedObservers();
               }
@@ -172,7 +172,9 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    currentUser: currentUser,
+    getCurrentUser: function () {
+      return currentUser
+    },
     registerUserChangeCallback: function (callback) {
       userChangeObserverCallbacks.push(callback);
     },

@@ -1,0 +1,40 @@
+<div class="input-group ">
+  <span class="input-group-addon">Search:</span>
+  <input type="text" class="form-control" placeholder="Query" ng-model="searchText">
+     <span class="input-group-btn">
+        <button class="btn btn-primary" ng-click="searchText = null" type="button">Clear</button>
+      </span>
+</div>
+<div class="table-responsive">
+  <table class="table table-striped ">
+    <thead>
+    <tr>
+      <td>
+        email
+      </td>
+      <td style="width:1px">
+        role
+      </td>
+      <td style="width:1px">
+        edit
+      </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="user in userList | filter:searchText track by $index">
+      <td>
+        {{user.email}}
+      </td>
+      <td>
+        {{user.role}}
+      </td>
+      <td class="text-center">
+        <span focus-edit ng-click="editKeyphrase(keyphrase)" class="pointer glyphicon glyphicon-edit"></span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div>
+
+</div>

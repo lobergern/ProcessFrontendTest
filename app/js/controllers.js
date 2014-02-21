@@ -4,7 +4,13 @@
 
 var controllers = angular.module('myApp.controllers', []);
 
-controllers.controller('NavCtrl', ['$scope', 'PageManager', '$location', function ($scope, PageManager) {
+controllers.controller('NavCtrl', ['$scope', 'PageManager', 'Authentication', function ($scope, PageManager, Authentication) {
+  $scope.currentUser = Authentication.getCurrentUser();
+
+  $scope.userChangeObserverCallback = function (user) {
+    $scope.currentUser = user;
+  };
+  Authentication.registerUserChangeCallback($scope.userChangeObserverCallback);
 
   $scope.getPages = function () {
     PageManager.getPages().then(function (response) {
@@ -28,7 +34,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
   $scope.page = $.extend({}, PageManager.getPageBeingEdited());
 
   $scope.saveEdit = function () {
-    PageManager.editPage($scope.page, Authentication.currentUser.session).then(function (response) {
+    PageManager.editPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
       if (response.status == 200) {
         PageManager.setPageBeingEdited(null);
         $location.path("/index");
@@ -50,7 +56,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
 
 controllers.controller('AddPageCtrl', ['$scope', 'PageManager', 'Authentication', '$location', function ($scope, PageManager, Authentication, $location) {
   $scope.addPage = function () {
-    PageManager.addPage($scope.page, Authentication.currentUser.session).then(function (response) {
+    PageManager.addPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
       if (response.status == 200) {
         $location.path('/index');
       } else {
@@ -66,7 +72,7 @@ controllers.controller('AddPageCtrl', ['$scope', 'PageManager', 'Authentication'
 
 controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scope, Authentication) {
   $scope.loginInfo = null;
-  $scope.currentUser = Authentication.currentUser;
+  $scope.currentUser = Authentication.getCurrentUser();
 
   $scope.userChangeCallback = function (user) {
     $scope.currentUser = user;
@@ -94,7 +100,7 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
 
 controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authentication', '$location', '$sce', function ($scope, PageManager, Authentication, $location, $sce) {
   $scope.page = PageManager.getPageBeingViewed();
-  $scope.currentUser = Authentication.currentUser;
+  $scope.currentUser = Authentication.getCurrentUser();
 
   $scope.userChangeObserverCallback = function (user) {
     $scope.currentUser = user;
@@ -117,7 +123,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
   $scope.$watch('rating', function () {
     if ($scope.rating && $scope.rating != $scope.previousRating) {
-      PageManager.ratePage($scope.page, $scope.rating, Authentication.currentUser.session).then(function (response) {
+      PageManager.ratePage($scope.page, $scope.rating, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status != 200) {
           var message = response.data.error || response.data.message;
           if (message == null || message.length < 1) {
@@ -141,7 +147,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
 
   $scope.getCurrentUserRatingForPage = function () {
     if ($scope.page && $scope.currentUser) {
-      PageManager.getSessionRatingForPage($scope.page, Authentication.currentUser.session).then(function (response) {
+      PageManager.getSessionRatingForPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status == 200) {
           $scope.previousRating = response.data.rating;
           $scope.rating = response.data.rating;
