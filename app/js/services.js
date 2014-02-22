@@ -145,7 +145,7 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
 }])
 ;
 
-services.factory('Authentication', ['$q', '$http', function ($q, $http) {
+services.factory('Authentication', [ '$http', function ($http) {
   var currentUser = $.cookie('currentApplicationUser') ? JSON.parse($.cookie('currentApplicationUser')) : null;
   var userChangeObserverCallbacks = [];
 
@@ -181,6 +181,54 @@ services.factory('Authentication', ['$q', '$http', function ($q, $http) {
     logout: function () {
       currentUser = null;
       notifyUserChangeObservers();
+    }
+  }
+}]);
+
+services.factory('UserManagement', ['$http', function ($http) {
+  return{
+    deleteUser: function (user, sessionToken) {
+      return $http({
+        method: "DELETE",
+        url: serverBaseUrl + '/user/' + user.email,
+        headers: {'Authorization': sessionToken},
+        crossDomain: true,
+        timeout: 2000
+      }).then(function (response) {
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
+    },
+    editUser: function (user, sessionToken) {
+      return $http({
+        method: "PUT",
+        url: serverBaseUrl + '/user/' + user.email,
+        data: JSON.stringify({role: user.role}),
+        headers: {'Authorization': sessionToken},
+        crossDomain: true,
+        timeout: 2000
+      }).then(function (response) {
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
+    },
+    getUserList: function (sessionToken) {
+      return $http({
+        method: "GET",
+        url: serverBaseUrl + '/users',
+        headers: {'Authorization': sessionToken},
+        crossDomain: true,
+        timeout: 2000
+      }).then(function (response) {
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
     }
   }
 }]);

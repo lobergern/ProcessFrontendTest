@@ -38,6 +38,7 @@ application.config(['$routeProvider', function ($routeProvider) {
     }
   });
   $routeProvider.when('/addPage', {templateUrl: 'partials/add_page.html', controller: 'AddPageCtrl'});
+  $routeProvider.when('/userManagement', {templateUrl: 'partials/user_management.html', controller: 'UserManagementCtrl'});
   $routeProvider.otherwise({redirectTo: '/welcome'});
 }]);
 
