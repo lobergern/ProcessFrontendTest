@@ -38,7 +38,8 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
       PageManager.editPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status == 200) {
           PageManager.setPageBeingEdited(null);
-          $location.path("/index");
+          PageManager.setPageBeingViewed(response.data);
+          $location.path("/pageDetails");
         } else {
           var message = response.data.error || response.data.message;
           if (message == null || message.length < 1) {
@@ -73,7 +74,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
 
   $scope.cancelEdit = function () {
     PageManager.setPageBeingEdited(null);
-    $location.path("/index");
+    $location.path("/pageDetails");
   };
 }]);
 
