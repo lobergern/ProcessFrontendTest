@@ -13,37 +13,38 @@ describe('controllers', function () {
     var ratingForSession;
 
 
-    mockAuthentication = {
-      getCurrentUser: function () {
-        return currentUser;
-      },
-      registerUserChangeCallback: function (callback) {
-      }
-    };
+    beforeEach(function () {
+      mockAuthentication = {
+        getCurrentUser: function () {
+          return currentUser;
+        },
+        registerUserChangeCallback: function (callback) {
+        }
+      };
+       mockPageManager = {
+        getPageBeingViewed: function () {
+          var deferred = $q.defer();
+          deferred.resolve(pageBeingViewed);
+          return deferred.promise;
+        },
+        registerPageBeingViewedObserverCallback: function (callback) {
+        },
+        getSessionRatingForPage: function (page, sessionToken) {
+          var deferred = $q.defer();
+          deferred.resolve({data: {rating: ratingForSession}, status: 200});
+          return deferred.promise;
+        },
+        ratePage: function (page, rating, sessionToken) {
+          var deferred = $q.defer();
+          page.rating = rating;
+          deferred.resolve({data: {page: page}, status: 200});
+          return deferred.promise;
+        },
+        setPageBeingEdited: function (page) {
 
-    mockPageManager = {
-      getPageBeingViewed: function () {
-        var deferred = $q.defer();
-        deferred.resolve(pageBeingViewed);
-        return deferred.promise;
-      },
-      registerPageBeingViewedObserverCallback: function (callback) {
-      },
-      getSessionRatingForPage: function (page, sessionToken) {
-        var deferred = $q.defer();
-        deferred.resolve({data: {rating: ratingForSession}, status: 200});
-        return deferred.promise;
-      },
-      ratePage: function (page, rating, sessionToken) {
-        var deferred = $q.defer();
-        page.rating = rating;
-        deferred.resolve({data: {page: page}, status: 200});
-        return deferred.promise;
-      },
-      setPageBeingEdited: function (page) {
-
-      }
-    };
+        }
+      };
+    });
 
     beforeEach
     (inject(function ($rootScope, $controller, _$q_) {
@@ -118,7 +119,7 @@ describe('controllers', function () {
       expect(mockPageManager.ratePage).not.toHaveBeenCalled();
     });
 
-    it('should set the page being edited to the current page when user tries to edit a page', function(){
+    it('should set the page being edited to the current page when user tries to edit a page', function () {
       spyOn(mockPageManager, 'setPageBeingEdited');
       $scope.page = 'someval';
       $scope.editPage();
