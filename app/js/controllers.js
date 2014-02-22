@@ -105,7 +105,9 @@ controllers.controller('LoginCtrl', ['$scope', 'Authentication', function ($scop
 
   $scope.login = function () {
     Authentication.login($scope.loginInfo.email, $scope.loginInfo.password).then(function (response) {
-      if (response.status != 200) {
+      if (response.status == 200) {
+        $scope.loginError = null;
+      } else {
         var message = response.data.error;
         if (message == null || message.length < 1) {
           message = "Error code " + response.status;
@@ -250,7 +252,7 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
           UserManagement.deleteUser(user, Authentication.getCurrentUser().session).then(function (response) {
             if (response.status == 200) {
               $.each($scope.users, function (index) {
-                if (this.email == response.data.email) {
+                if (this.email == user.email) {
                   $scope.users.splice(index, 1);
                   return false;
                 }
