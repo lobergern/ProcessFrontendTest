@@ -247,7 +247,7 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
     $scope.deleteUser = function (user) {
       if (Authentication.getCurrentUser()) {
         if (user.email == Authentication.getCurrentUser().email) {
-          $scope.deleteError = {Message: "Cannot delete yourself"};
+          $scope.showModal({title: 'Error', message: "Cannot delete yourself."});
         } else {
           UserManagement.deleteUser(user, Authentication.getCurrentUser().session).then(function (response) {
             if (response.status == 200) {
