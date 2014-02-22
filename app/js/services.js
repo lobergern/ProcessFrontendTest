@@ -62,12 +62,21 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         return responseError;
       });
     },
-    removePage: function (page, sessionToken) {
-      var deferred = $q.defer();
-      pages.splice(pages.indexOf(page), 1);
-      deferred.resolve({data: 'success', status: 200});
-      notifyPageObservers();
-      return deferred.promise;
+    deletePage: function (page, sessionToken) {
+      return $http({
+        method: "DELETE",
+        url: serverBaseUrl + '/content/' + page.id,
+        headers: {'Authorization': sessionToken},
+        crossDomain: true,
+        timeout: 2000
+      }).then(function (response) {
+        pages.splice(pages.indexOf(pageBeingEdited), 1);
+        notifyPageObservers();
+        return response;
+      }, function (responseError) {
+        console.log(responseError);
+        return responseError;
+      });
     },
     editPage: function (page, sessionToken) {
       return $http({

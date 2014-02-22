@@ -34,18 +34,41 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
   $scope.page = $.extend({}, PageManager.getPageBeingEdited());
 
   $scope.saveEdit = function () {
-    PageManager.editPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
-      if (response.status == 200) {
-        PageManager.setPageBeingEdited(null);
-        $location.path("/index");
-      } else {
-        var message = response.data.error || response.data.message;
-        if (message == null || message.length < 1) {
-          message = "Error code " + response.status;
+    if (Authentication.getCurrentUser()) {
+      PageManager.editPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
+        if (response.status == 200) {
+          PageManager.setPageBeingEdited(null);
+          $location.path("/index");
+        } else {
+          var message = response.data.error || response.data.message;
+          if (message == null || message.length < 1) {
+            message = "Error code " + response.status;
+          }
+          $scope.editDeleteError = {Message: "Could not edit Page: " + message};
         }
-        $scope.editError = {Message: "Could not edit Page: " + message};
-      }
-    });
+      });
+    } else {
+      $scope.editDeleteError = {Message: "Must log in as an administrator to edit page."};
+    }
+  };
+
+  $scope.deletePage = function () {
+    if (Authentication.getCurrentUser()) {
+      PageManager.deletePage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
+        if (response.status == 200) {
+          PageManager.setPageBeingEdited(null);
+          $location.path("/index");
+        } else {
+          var message = response.data.error || response.data.message;
+          if (message == null || message.length < 1) {
+            message = "Error code " + response.status;
+          }
+          $scope.editDeleteError = {Message: "Could not delete page: " + message};
+        }
+      });
+    } else {
+      $scope.editDeleteError = {Message: "Must log in as administrator to delete page"};
+    }
   };
 
   $scope.cancelEdit = function () {
@@ -150,10 +173,17 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
       PageManager.getSessionRatingForPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status == 200) {
           $scope.previousRating = response.data.rating;
-          $scope.rating = response.data.rating;
+          if (response.data.rating > 0) {
+            $scope.rating = response.data.rating;
+          }
         } else {
           $scope.rating = null;
           $scope.previousRating = 0;
+          var message = response.data.error || response.data.message;
+          if (message == null || message.length < 1) {
+            message = "Error code " + response.status;
+          }
+          $scope.rateError = {Message: "Could not retrieve rating for user: " + message};
         }
       });
     }
@@ -180,95 +210,98 @@ controllers.controller('CookieCtrl', ['Authentication', 'PageManager', function 
   Authentication.registerUserChangeCallback(userChangeObserverCallback);
 }]);
 
-controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement', '$modal', '$scope', function (Authentication, UserManagement, $modal, $scope) {
-  $scope.userRoles = ['ADMIN', 'VIEWER'];
+controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement', '$modal', '$scope', '$location',
+  function (Authentication, UserManagement, $modal, $scope, $location) {
+    $scope.userRoles = ['ADMIN', 'VIEWER'];
 
-  $scope.userChangeObserverCallback = function () {
-    $scope.getUsers();
-  };
-  Authentication.registerUserChangeCallback($scope.userChangeObserverCallback);
+    $scope.userChangeObserverCallback = function () {
+      if ($location.path() == '/userManagement') {
+        $scope.getUsers();
+      }
+    };
+    Authentication.registerUserChangeCallback($scope.userChangeObserverCallback);
 
-  $scope.getUsers = function () {
-    if (Authentication.getCurrentUser()) {
-      UserManagement.getUserList(Authentication.getCurrentUser().session).then(function (response) {
-        if (response.status == 200) {
-          $scope.users = response.data;
-        } else {
-          var message = response.data.error || response.data.message;
-          if (message == null || message.length < 1) {
-            message = "Error code " + response.status;
-          }
-          $scope.showModal({title: 'Error', message: "Could not retrieve users: " + message});
-        }
-      })
-    } else {
-      $scope.showModal({title: 'Log in', message: 'Must be logged in to edit users.'});
-      $scope.users = null;
-    }
-
-  };
-  $scope.getUsers();
-
-  $scope.deleteUser = function (user) {
-    if (Authentication.getCurrentUser()) {
-      if (user.email == Authentication.getCurrentUser().email) {
-        $scope.deleteError = {Message: "Cannot delete yourself"};
-      } else {
-        UserManagement.deleteUser(user, Authentication.getCurrentUser().session).then(function (response) {
+    $scope.getUsers = function () {
+      if (Authentication.getCurrentUser()) {
+        UserManagement.getUserList(Authentication.getCurrentUser().session).then(function (response) {
           if (response.status == 200) {
-            $.each($scope.users, function (index) {
-              if (this.email == response.data.email) {
-                $scope.users.splice(index, 1);
-                return false;
-              }
-            });
-            $scope.deleteSuccess = true;
+            $scope.users = response.data;
           } else {
             var message = response.data.error || response.data.message;
             if (message == null || message.length < 1) {
               message = "Error code " + response.status;
             }
-            $scope.showModal({title: 'Error', message: "Could not delete user: " + message});
+            $scope.showModal({title: 'Error', message: "Could not retrieve users: " + message});
+          }
+        })
+      } else {
+        $scope.showModal({title: 'Error', message: "Must be logged in as administrator to edit users."});
+        $scope.users = null;
+      }
+
+    };
+    $scope.getUsers();
+
+    $scope.deleteUser = function (user) {
+      if (Authentication.getCurrentUser()) {
+        if (user.email == Authentication.getCurrentUser().email) {
+          $scope.deleteError = {Message: "Cannot delete yourself"};
+        } else {
+          UserManagement.deleteUser(user, Authentication.getCurrentUser().session).then(function (response) {
+            if (response.status == 200) {
+              $.each($scope.users, function (index) {
+                if (this.email == response.data.email) {
+                  $scope.users.splice(index, 1);
+                  return false;
+                }
+              });
+              $scope.deleteSuccess = true;
+            } else {
+              var message = response.data.error || response.data.message;
+              if (message == null || message.length < 1) {
+                message = "Error code " + response.status;
+              }
+              $scope.showModal({title: 'Error', message: "Could not delete user: " + message});
+            }
+          });
+        }
+      } else {
+        $scope.showModal({title: 'Log in', message: "You need to log in as administrator to delete a user"});
+      }
+    };
+
+    $scope.saveUser = function (user) {
+      if (Authentication.getCurrentUser()) {
+        UserManagement.editUser(user, Authentication.getCurrentUser().session).then(function (response) {
+          if (response.status == 200) {
+            $scope.showModal({title: 'Success', message: 'User saved successfully'})
+          } else {
+            var message = response.data.error || response.data.message;
+            if (message == null || message.length < 1) {
+              message = "Error code " + response.status;
+            }
+            $scope.showModal({title: 'Error', message: "Could not edit user: " + message});
           }
         });
+      } else {
+        $scope.showModal({title: 'Log in', message: "You need to log in as administrator to edit a user's role"});
       }
-    } else {
-      $scope.showModal({title: 'Log in', message: "You need to log in as administrator to delete a user"});
-    }
-  };
+    };
 
-  $scope.saveUser = function (user) {
-    if (Authentication.getCurrentUser()) {
-      UserManagement.editUser(user, Authentication.getCurrentUser().session).then(function (response) {
-        if (response.status == 200) {
-          $scope.showModal({title:'Success', message:'User saved successfully'})
-        } else {
-          var message = response.data.error || response.data.message;
-          if (message == null || message.length < 1) {
-            message = "Error code " + response.status;
+    $scope.showModal = function (message) {
+      $modal.open({
+        templateUrl: 'partials/modal_message.html',
+        controller: function ($scope, $modalInstance, message) {
+          $scope.message = message;
+          $scope.dismiss = function () {
+            $modalInstance.dismiss();
           }
-          $scope.showModal({title: 'Error', message: "Could not edit user: " + message});
+        },
+        resolve: {
+          message: function () {
+            return message;
+          }
         }
       });
-    } else {
-      $scope.showModal({title: 'Log in', message: "You need to log in as administrator to edit a user's role"});
     }
-  };
-
-  $scope.showModal = function (message) {
-    $modal.open({
-      templateUrl: 'partials/modal_message.html',
-      controller: function ($scope, $modalInstance, message) {
-        $scope.message = message;
-        $scope.dismiss = function () {
-          $modalInstance.dismiss();
-        }
-      },
-      resolve: {
-        message: function () {
-          return message;
-        }
-      }
-    });
-  }
-}]);
+  }]);

@@ -5,8 +5,10 @@
 <div class="col-lg-5 col-md-6">
   <div ng-hide="currentUser==null">
     Your Rating:
-    <rating value="rating" max="5" readonly="currentUser==null"></rating>{{rating}}
-     <span class="error pointer" popover="Click to dismiss" popover-placement="top" popover-trigger="mouseenter" ng-click="rateError=null" ng-show="rateError">
+    <rating value="rating" max="5" readonly="currentUser==null"></rating>
+    {{rating}}
+     <span class="error pointer" popover="Click to dismiss" popover-placement="top" popover-trigger="mouseenter"
+           ng-click="rateError.Message=null" ng-show="rateError.Message">
           {{rateError.Message}}
      </span>
   </div>
