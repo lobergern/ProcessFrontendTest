@@ -7,7 +7,7 @@ describe('controllers', function () {
 
 
   describe('PageDetailsCtrl', function () {
-    var $scope, $location, $rootScope, createController, $q;
+    var $scope, createController, $q;
     var mockPageManager, mockAuthentication;
     var pageBeingViewed, currentUser;
     var ratingForSession;
@@ -21,7 +21,6 @@ describe('controllers', function () {
       }
     };
 
-
     mockPageManager = {
       getPageBeingViewed: function () {
         var deferred = $q.defer();
@@ -34,6 +33,15 @@ describe('controllers', function () {
         var deferred = $q.defer();
         deferred.resolve({data: {rating: ratingForSession}, status: 200});
         return deferred.promise;
+      },
+      ratePage: function (page, rating, sessionToken) {
+        var deferred = $q.defer();
+        page.rating = rating;
+        deferred.resolve({data: {page: page}, status: 200});
+        return deferred.promise;
+      },
+      setPageBeingEdited: function (page) {
+
       }
     };
 
@@ -78,6 +86,44 @@ describe('controllers', function () {
       $scope.page = {};
       $scope.$apply();
       expect(mockPageManager.getSessionRatingForPage).toHaveBeenCalled();
-    })
+    });
+
+    it('should attempt to update the user rating when the page changes', function () {
+      spyOn($scope, 'getCurrentUserRatingForPage');
+      $scope.page = {};
+      $scope.$apply();
+      expect($scope.getCurrentUserRatingForPage).toHaveBeenCalled();
+    });
+
+    it('should attempt update the user rating notified that the logged in user has changed', function () {
+      spyOn($scope, 'getCurrentUserRatingForPage');
+      $scope.user = {};
+      $scope.$apply();
+      expect($scope.getCurrentUserRatingForPage).toHaveBeenCalled();
+    });
+
+    it('should try to rate the page when the rating changes to a different value than the previous rating', function () {
+      $scope.previousRating = 1;
+      spyOn(mockPageManager, 'ratePage').andCallThrough();
+      $scope.rating = 2;
+      $scope.$apply();
+      expect(mockPageManager.ratePage).toHaveBeenCalled();
+    });
+
+    it('should NOT rate the page if the current rating is the same as the previous', function () {
+      $scope.previousRating = 1;
+      spyOn(mockPageManager, 'ratePage').andCallThrough();
+      $scope.rating = 1;
+      $scope.$apply();
+      expect(mockPageManager.ratePage).not.toHaveBeenCalled();
+    });
+
+    it('should set the page being edited to the current page when user tries to edit a page', function(){
+      spyOn(mockPageManager, 'setPageBeingEdited');
+      $scope.page = 'someval';
+      $scope.editPage();
+      expect(mockPageManager.setPageBeingEdited).toHaveBeenCalledWith($scope.page);
+    });
+
   })
 });

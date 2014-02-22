@@ -35,7 +35,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         pages = response.data;
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -58,7 +57,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         notifyPageObservers();
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -74,7 +72,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         notifyPageObservers();
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -91,7 +88,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         notifyPageObservers();
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -118,7 +114,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
       }).then(function (response) {
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -146,7 +141,6 @@ services.factory('PageManager', ['$q', '$http', function ($q, $http) {
         notifyPageObservers();
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     }
@@ -177,7 +171,6 @@ services.factory('Authentication', [ '$http', function ($http) {
         notifyUserChangeObservers();
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -206,7 +199,6 @@ services.factory('UserManagement', ['$http', function ($http) {
       }).then(function (response) {
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -221,7 +213,6 @@ services.factory('UserManagement', ['$http', function ($http) {
       }).then(function (response) {
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     },
@@ -235,7 +226,6 @@ services.factory('UserManagement', ['$http', function ($http) {
       }).then(function (response) {
         return response;
       }, function (responseError) {
-        console.log(responseError);
         return responseError;
       });
     }
