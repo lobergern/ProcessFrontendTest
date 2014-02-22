@@ -172,7 +172,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
   });
 
   $scope.getCurrentUserRatingForPage = function () {
-    if ($scope.page && $scope.currentUser) {
+    if ($scope.page && Authentication.getCurrentUser()) {
       PageManager.getSessionRatingForPage($scope.page, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status == 200) {
           $scope.previousRating = response.data.rating;
