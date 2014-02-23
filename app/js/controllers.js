@@ -41,7 +41,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
           PageManager.setPageBeingViewed(response.data);
           $location.path("/pageDetails");
         } else {
-          var message = response.data.error || response.data.message;
+          var message = response.data ? (response.data.error || response.data.message) : null;
           if (message == null || message.length < 1) {
             message = "Error code " + response.status;
           }
@@ -60,7 +60,7 @@ controllers.controller('EditPageCtrl', ['$scope', 'PageManager', 'Authentication
           PageManager.setPageBeingEdited(null);
           $location.path("/index");
         } else {
-          var message = response.data.error || response.data.message;
+          var message = response.data ? (response.data.error || response.data.message) : null;
           if (message == null || message.length < 1) {
             message = "Error code " + response.status;
           }
@@ -151,7 +151,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
     if ($scope.rating && $scope.rating != $scope.previousRating) {
       PageManager.ratePage($scope.page, $scope.rating, Authentication.getCurrentUser().session).then(function (response) {
         if (response.status != 200) {
-          var message = response.data.error || response.data.message;
+          var message = response.data ? (response.data.error || response.data.message) : null;
           if (message == null || message.length < 1) {
             message = "Error code " + response.status;
           }
@@ -182,7 +182,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
         } else {
           $scope.rating = null;
           $scope.previousRating = 0;
-          var message = response.data.error || response.data.message;
+          var message = response.data ? (response.data.error || response.data.message) : null;
           if (message == null || message.length < 1) {
             message = "Error code " + response.status;
           }
@@ -230,7 +230,7 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
           if (response.status == 200) {
             $scope.users = response.data;
           } else {
-            var message = response.data.error || response.data.message;
+            var message = response.data ? (response.data.error || response.data.message) : null;
             if (message == null || message.length < 1) {
               message = "Error code " + response.status;
             }
@@ -260,7 +260,7 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
               });
               $scope.deleteSuccess = true;
             } else {
-              var message = response.data.error || response.data.message;
+              var message = response.data ? (response.data.error || response.data.message) : null;
               if (message == null || message.length < 1) {
                 message = "Error code " + response.status;
               }
@@ -279,7 +279,7 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
           if (response.status == 200) {
             $scope.showModal({title: 'Success', message: 'User saved successfully'})
           } else {
-            var message = response.data.error || response.data.message;
+            var message = response.data ? (response.data.error || response.data.message) : null;
             if (message == null || message.length < 1) {
               message = "Error code " + response.status;
             }
