@@ -3,8 +3,90 @@
 /* jasmine specs for controllers go here */
 
 describe('controllers', function () {
-  beforeEach(module('myApp.controllers'));
+  beforeEach(module('myApp.controllers', 'ui.bootstrap'));
 
+
+  describe('UserManagementCtrl', function () {
+    var $scope, createController, $q;
+    var mockAuthentication, mockUserManagement;
+    var currentUser;
+    var userList = ['something', 'something2'];
+
+    beforeEach(function () {
+      mockAuthentication = {
+        getCurrentUser: function () {
+          return currentUser;
+        },
+        registerUserChangeCallback: function (callback) {
+        }
+      };
+      mockUserManagement = {
+        getUserList: function () {
+          var deferred = $q.defer();
+          deferred.resolve({data:userList, status: 200});
+          return deferred.promise;
+        }
+      };
+    });
+
+    beforeEach
+    (inject(function ($rootScope, $controller, $modal, _$q_, $httpBackend) {
+      $scope = $rootScope.$new();
+      $q = _$q_;
+      $httpBackend.when('GET', 'partials/modal_message.html').respond();
+      createController = function () {
+        return $controller('UserManagementCtrl', {
+          $scope: $scope,
+          Authentication: mockAuthentication,
+          UserManagement: mockUserManagement
+        });
+      };
+      createController();
+    }));
+
+    it('should watch for changes to the user logged in', function () {
+      spyOn(mockAuthentication, 'registerUserChangeCallback');
+      createController();
+      expect(mockAuthentication.registerUserChangeCallback).toHaveBeenCalled();
+    });
+
+    it('should not get the list of users if there is no user logged in', function () {
+      spyOn(mockUserManagement, 'getUserList');
+      $scope.getUsers();
+      expect(mockUserManagement.getUserList).not.toHaveBeenCalled();
+    });
+
+    it('should not get the list of users if there is no user logged in', function () {
+      spyOn($scope, 'showModal');
+      currentUser = null;
+      $scope.getUsers();
+      expect($scope.showModal).toHaveBeenCalled();
+    });
+
+    it('should show an error if the current user does not have admin rights', function () {
+      spyOn($scope, 'showModal');
+      currentUser = {session: ''};
+      mockUserManagement.getUserList = function () {
+        var deferred = $q.defer();
+        deferred.resolve({status: 500});
+        return deferred.promise;
+      };
+      $scope.getUsers();
+      $scope.$apply();
+      expect($scope.showModal).toHaveBeenCalled();
+    });
+
+    it('should set the users in the scope to be the list of users passed back by the service', function(){
+      currentUser = {session:''};
+      $scope.getUsers();
+      $scope.$apply();
+      expect($scope.users).toEqual(userList);
+    });
+
+    afterEach(inject(function($rootScope) {
+      $rootScope.$apply();
+    }));
+  });
 
   describe('PageDetailsCtrl', function () {
     var $scope, createController, $q;
@@ -21,7 +103,7 @@ describe('controllers', function () {
         registerUserChangeCallback: function (callback) {
         }
       };
-       mockPageManager = {
+      mockPageManager = {
         getPageBeingViewed: function () {
           var deferred = $q.defer();
           deferred.resolve(pageBeingViewed);
@@ -76,6 +158,7 @@ describe('controllers', function () {
     it('should NOT get the current user\'s page rating when the page changes if no user is logged in', function () {
       spyOn(mockPageManager, 'getSessionRatingForPage').andCallThrough();
       currentUser = null;
+      $scope.page = {};
       $scope.$apply();
       expect(mockPageManager.getSessionRatingForPage).not.toHaveBeenCalled();
     });
@@ -83,7 +166,6 @@ describe('controllers', function () {
     it('should get the current user\'s page rating when the page changes', function () {
       spyOn(mockPageManager, 'getSessionRatingForPage').andCallThrough();
       currentUser = {session: ''};
-      ratingForSession = 3;
       $scope.page = {};
       $scope.$apply();
       expect(mockPageManager.getSessionRatingForPage).toHaveBeenCalled();

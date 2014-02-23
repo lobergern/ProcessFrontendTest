@@ -179,6 +179,8 @@ services.factory('Authentication', [ '$http', function ($http) {
     },
     registerUserChangeCallback: function (callback) {
       userChangeObserverCallbacks.push(callback);
+    }, unregisterUserChangeCallback: function (callback) {
+      userChangeObserverCallbacks.splice(userChangeObserverCallbacks.indexOf(callback), 1);
     },
     logout: function () {
       currentUser = null;

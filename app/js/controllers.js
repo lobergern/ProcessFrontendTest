@@ -178,7 +178,7 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
           $scope.previousRating = response.data.rating;
           if (response.data.rating > 0) {
             $scope.rating = response.data.rating;
-          }else{
+          } else {
             $scope.rating = null;
           }
         } else {
@@ -192,7 +192,11 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
         }
       });
     }
-  }
+  };
+
+  $scope.$on('$destroy', function () {
+    Authentication.unregisterUserChangeCallback($scope.userChangeObserverCallback);
+  });
 
 }]);
 
@@ -218,6 +222,23 @@ controllers.controller('CookieCtrl', ['Authentication', 'PageManager', function 
 controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement', '$modal', '$scope', '$location',
   function (Authentication, UserManagement, $modal, $scope, $location) {
     $scope.userRoles = ['ADMIN', 'VIEWER'];
+
+    $scope.showModal = function (message) {
+      $modal.open({
+        templateUrl: 'partials/modal_message.html',
+        controller: function ($scope, $modalInstance, message) {
+          $scope.message = message;
+          $scope.dismiss = function () {
+            $modalInstance.dismiss();
+          }
+        },
+        resolve: {
+          message: function () {
+            return message;
+          }
+        }
+      });
+    };
 
     $scope.userChangeObserverCallback = function () {
       if ($location.path() == '/userManagement') {
@@ -293,20 +314,8 @@ controllers.controller('UserManagementCtrl', ['Authentication', 'UserManagement'
       }
     };
 
-    $scope.showModal = function (message) {
-      $modal.open({
-        templateUrl: 'partials/modal_message.html',
-        controller: function ($scope, $modalInstance, message) {
-          $scope.message = message;
-          $scope.dismiss = function () {
-            $modalInstance.dismiss();
-          }
-        },
-        resolve: {
-          message: function () {
-            return message;
-          }
-        }
-      });
-    }
+    $scope.$on('$destroy', function () {
+      Authentication.unregisterUserChangeCallback($scope.userChangeObserverCallback);
+    });
+
   }]);
