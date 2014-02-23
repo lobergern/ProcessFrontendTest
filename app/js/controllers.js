@@ -178,6 +178,8 @@ controllers.controller('PageDetailsCtrl', ['$scope', 'PageManager', 'Authenticat
           $scope.previousRating = response.data.rating;
           if (response.data.rating > 0) {
             $scope.rating = response.data.rating;
+          }else{
+            $scope.rating = null;
           }
         } else {
           $scope.rating = null;
