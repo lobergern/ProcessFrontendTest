@@ -2,7 +2,7 @@
   {{page.title}}
   <button class="btn btn-warning" ng-show="currentUser.role == 'ADMIN'" ng-click="editPage()">edit page</button>
 </legend>
-<div class="col-lg-5 col-md-6">
+<div ng-class="{'col-lg-5 col-md-6':page.video}">
   <div ng-hide="currentUser==null">
     Your Rating:
     <rating value="rating" max="5" readonly="currentUser==null"></rating>
@@ -22,5 +22,5 @@
 
 </div>
 <div ng-cloak style="height:500px" class="col-lg-7 col-md-6">
-  <div my-youtube code="page.video"></div>
+  <div ng-show="page.video" my-youtube code="page.video"></div>
 </div>
