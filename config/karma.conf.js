@@ -4,6 +4,9 @@ module.exports = function(config){
 
     files : [
       'app/lib/angular/angular.js',
+      'app/lib/jquery-1.11.0.min.js',
+      'app/lib/jquery.cookie.js',
+      'app/lib/ui-bootstrap.min.js',
       'app/lib/angular/angular-*.js',
       'test/lib/angular/angular-mocks.js',
       'app/js/**/*.js',
@@ -34,4 +37,4 @@ module.exports = function(config){
       suite: 'unit'
     }
 
-})}
+})};
