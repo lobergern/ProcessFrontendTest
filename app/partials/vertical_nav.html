@@ -1,0 +1,11 @@
+<div ng-controller="NavCtrl">
+  <nav ng-cloak>
+    <ul class="nav nav-pills nav-stacked">
+      <li ng-show="currentUser.role == 'ADMIN'"><a href="#/addPage">Add Page</a></li>
+      <li ng-show="currentUser.role == 'ADMIN'"><a href="#/userManagement">Manage Users</a></li>
+      <li ng-show="currentUser.role == 'ADMIN'" class="nav-divider"></li>
+      <li ng-repeat="page in pages | orderBy:'title':false track by $index">
+        <a href="#/pageDetails" ng-click="setPageBeingViewed(page)">{{page.title}}</a></li>
+    </ul>
+  </nav>
+</div>

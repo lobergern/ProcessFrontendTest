@@ -1,0 +1,20 @@
+<div ng-controller="LoginCtrl" class="well">
+  <div ng-hide="currentUser">
+    <form class="form-inline">
+      <fieldset>
+        <label class="control-label"><strong>Email:</strong></label>
+        <input type="text" ng-model="loginInfo.email" class="input-mini">
+        <label class="control-label"><strong>Password:</strong></label>
+        <input type="password" ng-model="loginInfo.password" class="input-mini">
+        <input type="submit" value="Login" ng-click="login()" class="btn btn-primary">
+        <span class="error pointer" popover="Click to dismiss" popover-placement="right" popover-trigger="mouseenter" ng-click="loginError.Message = null" ng-show="loginError.Message">
+          {{loginError.Message}}
+        </span>
+      </fieldset>
+    </form>
+  </div>
+  <div ng-show="currentUser">
+    Logged in as {{currentUser.email}}
+    <button class="btn btn-primary" ng-click="logout()">Logout</button>
+  </div>
+</div>

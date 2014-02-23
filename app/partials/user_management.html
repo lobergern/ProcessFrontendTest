@@ -1,0 +1,41 @@
+<div class="input-group right-buffer ">
+  <span class="input-group-addon">Search:</span>
+  <input type="text" class="form-control" placeholder="Query" ng-model="searchText">
+     <span class="input-group-btn">
+        <button class="btn btn-primary" ng-click="searchText = null" type="button">Clear</button>
+      </span>
+</div>
+<div class="table-responsive right-buffer">
+  <table class="table table-striped ">
+    <thead>
+    <tr>
+      <td>
+        email
+      </td>
+      <td>
+        role
+      </td>
+      <td style="width:1px">
+        delete
+      </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="user in users | filter:searchText track by $index">
+      <td>
+        {{user.email}}
+      </td>
+      <td>
+        <select ng-model="user.role" ng-options="role for role in userRoles"></select>
+        <span ng-click="saveUser(user)" class="pointer glyphicon glyphicon-floppy-disk"></span>
+      </td>
+      <td class="text-center">
+        <span ng-click="deleteUser(user)" class="pointer glyphicon glyphicon-remove"></span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div>
+
+</div>

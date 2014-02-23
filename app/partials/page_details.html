@@ -1,0 +1,26 @@
+<legend>
+  {{page.title}}
+  <button class="btn btn-warning" ng-show="currentUser.role == 'ADMIN'" ng-click="editPage()">edit page</button>
+</legend>
+<div ng-class="{'col-lg-5 col-md-6':page.video}">
+  <div ng-hide="currentUser==null">
+    Your Rating:
+    <rating value="rating" max="5" readonly="currentUser==null"></rating>
+    {{rating}}
+     <span class="error pointer" popover="Click to dismiss" popover-placement="top" popover-trigger="mouseenter"
+           ng-click="rateError.Message=null" ng-show="rateError.Message">
+          {{rateError.Message}}
+     </span>
+  </div>
+  Average user rating:
+  <rating value="page.rating" max="5" readonly="true"></rating>
+  {{page.rating}}
+  <br/>
+
+  <div class="top-buffer">Page description:</div>
+  <div ng-bind-html="getPageDescription()"></div>
+
+</div>
+<div ng-cloak style="height:500px" class="col-lg-7 col-md-6">
+  <div ng-show="page.video" my-youtube code="page.video"></div>
+</div>
