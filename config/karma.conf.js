@@ -32,6 +32,8 @@ module.exports = function(config){
             'karma-jasmine'
             ],
 
+    singleRun : true,
+
     junitReporter : {
       outputFile: 'test_out/unit.xml',
       suite: 'unit'
